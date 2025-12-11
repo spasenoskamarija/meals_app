@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../data/api_data.dart';
 import '../models/category.dart';
@@ -20,6 +21,26 @@ class _CategoriesPageState extends State<CategoriesPage> {
   void initState() {
     super.initState();
     load();
+
+    //listener
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(message.notification!.title ?? ""),
+            content: Text(message.notification!.body ?? ""),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    });
+
   }
 
   void load() async {
